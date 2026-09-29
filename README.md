@@ -15,6 +15,7 @@ Eğitim aşamasında veri ön işleme (preprocessing) ve modelleme adımları te
 
 ## 💻 Canlıya Alma (Deployment) ve Kullanım
 Proje, bir REST API olarak hizmet vermektedir ve kullanıcı dostu bir web arayüzüne sahiptir. Gelen JSON formatındaki HTTP POST istekleri FastAPI arka planında işlenir, eğitilmiş Pickle modeli üzerinden geçirilir ve anında risk raporu (Onay/Ret) olarak geri döndürülür.
+![Kredi Risk Tahmin Arayüzü](screenshot.png)
 
 ### Kurulum Adımları
 Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyebilirsiniz:
