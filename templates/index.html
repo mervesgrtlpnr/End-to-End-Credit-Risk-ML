@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kredi Risk Tahmin Sistemi</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-size: 1.1rem; }
+        .card { border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); border: none; }
+        .result-box { display: none; font-weight: bold; font-size: 1.5rem; padding: 20px; border-radius: 10px; }
+        .form-label { font-weight: 500; color: #495057; }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <!-- Tasarımı büyütmek için col-md-8'den col-lg-10'a çıkarıldı -->
+        <div class="col-lg-10">
+            <div class="card p-5">
+                <h2 class="text-center mb-5 text-primary fw-bold">Kredi Risk Onay Sistemi</h2>
+
+                <form id="predictForm">
+                    <div class="row">
+                        <!-- Müşteri Bilgileri -->
+                        <h4 class="mb-4 text-secondary border-bottom pb-2">Müşteri Bilgileri</h4>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Yaş</label>
+                            <input type="number" class="form-control form-control-lg" id="person_age" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Yıllık Gelir</label>
+                            <input type="number" class="form-control form-control-lg" id="person_income" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Ev Sahipliği</label>
+                            <select class="form-select form-select-lg" id="person_home_ownership" required>
+                                <option value="" selected disabled>Seçiniz</option>
+                                <option value="RENT">Kiracı</option>
+                                <option value="OWN">Ev Sahibi</option>
+                                <option value="MORTGAGE">İpotekli</option>
+                                <option value="OTHER">Diğer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Çalışma Süresi (Yıl)</label>
+                            <input type="number" step="0.1" class="form-control form-control-lg" id="person_emp_length" required>
+                        </div>
+
+                        <!-- Kredi Bilgileri -->
+                        <h4 class="mt-4 mb-4 text-secondary border-bottom pb-2">Kredi Bilgileri</h4>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Kredi Amacı</label>
+                            <select class="form-select form-select-lg" id="loan_intent" required>
+                                <option value="" selected disabled>Seçiniz</option>
+                                <option value="PERSONAL">Kişisel</option>
+                                <option value="EDUCATION">Eğitim</option>
+                                <option value="MEDICAL">Sağlık</option>
+                                <option value="VENTURE">Girişim</option>
+                                <option value="HOMEIMPROVEMENT">Ev Geliştirme</option>
+                                <option value="DEBTCONSOLIDATION">Borç Kapatma</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Kredi Derecesi</label>
+                            <select class="form-select form-select-lg" id="loan_grade" required>
+                                <option value="" selected disabled>Seçiniz</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="G">G</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Kredi Tutarı</label>
+                            <input type="number" class="form-control form-control-lg" id="loan_amnt" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Faiz Oranı (%)</label>
+                            <input type="number" step="0.01" class="form-control form-control-lg" id="loan_int_rate" required>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Gelir/Kredi Oranı</label>
+                            <input type="number" step="0.01" class="form-control form-control-lg" id="loan_percent_income" required>
+                        </div>
+
+                        <!-- Geçmiş Veriler -->
+                        <h4 class="mt-4 mb-4 text-secondary border-bottom pb-2">Geçmiş Kredi Kayıtları</h4>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Kara Liste Kaydı Var mı?</label>
+                            <select class="form-select form-select-lg" id="cb_person_default_on_file" required>
+                                <option value="" selected disabled>Seçiniz</option>
+                                <option value="N">Hayır</option>
+                                <option value="Y">Evet</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Kredi Geçmişi Süresi (Yıl)</label>
+                            <input type="number" class="form-control form-control-lg" id="cb_person_cred_hist_length" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-5 py-3 fw-bold shadow-sm">Kredi Riskini Tahmin Et</button>
+                </form>
+
+                <!-- Sonuç Alanı -->
+                <div id="resultBox" class="alert text-center mt-5 result-box"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('predictForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const data = {
+            person_age: parseInt(document.getElementById('person_age').value),
+            loan_intent: document.getElementById('loan_intent').value,
+            loan_grade: document.getElementById('loan_grade').value,
+            person_home_ownership: document.getElementById('person_home_ownership').value,
+            person_income: parseInt(document.getElementById('person_income').value),
+            person_emp_length: parseFloat(document.getElementById('person_emp_length').value),
+            loan_amnt: parseInt(document.getElementById('loan_amnt').value),
+            loan_int_rate: parseFloat(document.getElementById('loan_int_rate').value),
+            loan_percent_income: parseFloat(document.getElementById('loan_percent_income').value),
+            cb_person_default_on_file: document.getElementById('cb_person_default_on_file').value,
+            cb_person_cred_hist_length: parseInt(document.getElementById('cb_person_cred_hist_length').value)
+        };
+
+        const resultBox = document.getElementById('resultBox');
+        resultBox.style.display = 'block';
+        resultBox.className = 'alert text-center mt-5 result-box alert-secondary';
+        resultBox.innerText = 'Hesaplanıyor...';
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+
+                if (result.prediction === 1) {
+                    resultBox.className = 'alert text-center mt-5 result-box alert-danger shadow-sm';
+                    resultBox.innerText = '⚠️ RİSKLİ MÜŞTERİ: Kredi Onaylanmadı.';
+                } else {
+                    resultBox.className = 'alert text-center mt-5 result-box alert-success shadow-sm';
+                    resultBox.innerText = '✅ GÜVENİLİR MÜŞTERİ: Kredi Onaylandı.';
+                }
+            } else {
+                resultBox.className = 'alert text-center mt-5 result-box alert-warning';
+                resultBox.innerText = 'Veri gönderiminde bir hata oluştu. Lütfen boş alan bırakmadığınızdan emin olun.';
+            }
+        } catch (error) {
+            resultBox.className = 'alert text-center mt-5 result-box alert-danger';
+            resultBox.innerText = 'Sunucuya bağlanılamadı. Uvicorn açık mı?';
+        }
+    });
+</script>
+
+</body>
+</html>
